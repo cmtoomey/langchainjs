@@ -1,3 +1,6 @@
+// TODO: import the client instead of instantiating here.
+// Let the use decide how they want to do stuff.
+// This will / should also help with unit-testing
 import { createClient } from "redis";
 import type { RedisClientType } from "redis";
 import { BaseChatMemory, BaseMemoryInput } from "./chat_memory.js";
@@ -21,8 +24,9 @@ export type RedisMemoryInput = BaseMemoryInput & {
 };
 
 export class RedisMemory extends BaseChatMemory {
+  // TODO: Keep
   client: RedisClientType;
-
+  // TODO Remove
   redisURL = "redis://localhost:6379";
 
   memoryKey = "history";
@@ -46,6 +50,7 @@ export class RedisMemory extends BaseChatMemory {
     this.memoryKey = memoryKey ?? this.memoryKey;
     this.sessionId = this.memoryKey + sessionId;
     this.memoryTTL = this.memoryTTL ?? this.memoryTTL;
+    // TODO Update to client
     this.client = createClient({ url: this.redisURL });
   }
 
