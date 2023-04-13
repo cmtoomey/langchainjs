@@ -2,6 +2,10 @@ import { test, expect, jest } from "@jest/globals";
 import { RedisMemory } from "../redis_memory.js";
 import { HumanChatMessage, AIChatMessage } from "../../schema/index.js";
 
+// TODO Add redis-mock
+// TODO pass the client
+// TODO include the correct params
+// TODO Update docs
 test("Test Redis memory", async () => {
   global.fetch = jest.fn(() =>
     Promise.resolve({
