@@ -27,7 +27,7 @@ export class RedisMemory extends BaseChatMemory {
 
   memoryTTL: number = 300;
 
-  constructor(fields: RedisMemoryInput, client: RedisClientType) {
+  constructor(client: RedisClientType, fields: RedisMemoryInput) {
     const {
       memoryKey,
       sessionId,
@@ -42,10 +42,11 @@ export class RedisMemory extends BaseChatMemory {
     this.sessionId = this.memoryKey + sessionId;
     this.memoryTTL = memoryTTL ?? this.memoryTTL;
     this.client = client;
+    this.client.connect();
   }
 
   async init(): Promise<void> {
-    await this.client.connect();
+    // await this.client.connect();
     const initMessages = await this.client.lRange(this.sessionId, 0, -1);
     const orderedMessages = initMessages
       .reverse()
@@ -59,6 +60,8 @@ export class RedisMemory extends BaseChatMemory {
     });
   }
 
+  // TODO this needs to actually fetch from Redis and insert into Memory
+  // TODO Use the init pattern for this
   async loadMemoryVariables(_values: InputValues): Promise<MemoryVariables> {
     if (this.returnMessages) {
       const result = {
@@ -80,10 +83,12 @@ export class RedisMemory extends BaseChatMemory {
       JSON.stringify({ role: "Human", content: `${inputValues.input}` }),
       JSON.stringify({ role: "AI", content: `${outputValues.response}` }),
     ];
-    await Promise.all([
-      this.client.lPush(this.sessionId, messagesToAdd),
-      this.client.expire(this.sessionId, this.memoryTTL),
-      super.saveContext(inputValues, outputValues),
-    ]);
+    await this.client.lPush(this.sessionId, messagesToAdd);
+    await this.client.expire(this.sessionId, this.memoryTTL);
+    // await Promise.all([
+    //   this.client.lPush(this.sessionId, messagesToAdd),
+    //   this.client.expire(this.sessionId, this.memoryTTL),
+    //   super.saveContext(inputValues, outputValues),
+    // ]);
   }
 }
