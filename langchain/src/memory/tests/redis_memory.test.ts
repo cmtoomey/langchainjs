@@ -3,8 +3,7 @@ import { RedisMemory } from "../redis_memory.js";
 // import { HumanChatMessage, AIChatMessage } from "../../schema/index.js";
 import { createClient } from "redis";
 
-// TODO pass the client
-// TODO include the correct params
+// TODO Add test for returning with messages
 // TODO Update docs
 test("Test Redis memory", async () => {
   global.fetch = jest.fn(() =>
@@ -22,21 +21,20 @@ test("Test Redis memory", async () => {
   const client = createClient();
   //@ts-ignore foo
   const memory = new RedisMemory(client, {
-    returnMessages: true,
+    // returnMessages: true,
     sessionId: "one",
   });
   await memory.init();
   const result1 = await memory.loadMemoryVariables({});
-  expect(result1).toStrictEqual({ history: [] });
+  expect(result1).toStrictEqual({ history: "" });
 
   await memory.saveContext(
     { input: "Who is the best vocalist?" },
     { response: "Ozzy Osbourne" }
   );
-  // const expectedString = "Human: Who is the best vocalist?\nAI: Ozzy Osbourne";
+  const expectedString = "Human: Who is the best vocalist?\nAI: Ozzy Osbourne";
   const result2 = await memory.loadMemoryVariables({});
-  console.log(result2);
-  // expect(result2).toStrictEqual({ history: expectedString });
+  expect(result2).toStrictEqual({ history: expectedString });
 });
 
 // test("Test Redis memory with pre-loaded history", async () => {
