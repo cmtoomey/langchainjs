@@ -45,22 +45,6 @@ export class RedisMemory extends BaseChatMemory {
     this.client.connect();
   }
 
-  // TODO Refactor Init pattern into its own function
-  async init(): Promise<void> {
-    const initMessages = await this.client.lRange(this.sessionId, 0, -1);
-    const orderedMessages = initMessages
-      .reverse()
-      .map((message) => JSON.parse(message));
-    orderedMessages.forEach((message: RedisMemoryMessage) => {
-      if (message.role === "AI") {
-        this.chatHistory.addAIChatMessage(message.content);
-      } else {
-        this.chatHistory.addUserMessage(message.content);
-      }
-    });
-  }
-
-  // TODO Refactor Init pattern into its own function
   async loadMemoryVariables(_values: InputValues): Promise<MemoryVariables> {
     const initMessages = await this.client.lRange(this.sessionId, 0, -1);
     const orderedMessages = initMessages
@@ -96,10 +80,5 @@ export class RedisMemory extends BaseChatMemory {
     ];
     await this.client.lPush(this.sessionId, messagesToAdd);
     await this.client.expire(this.sessionId, this.memoryTTL);
-    // await Promise.all([
-    //   this.client.lPush(this.sessionId, messagesToAdd),
-    //   this.client.expire(this.sessionId, this.memoryTTL),
-    //   super.saveContext(inputValues, outputValues),
-    // ]);
   }
 }
