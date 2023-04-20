@@ -45,7 +45,7 @@ export class RedisMemory extends BaseChatMemory {
     this.client.connect();
   }
 
-  async loadMemoryVariables(_values: InputValues): Promise<MemoryVariables> {
+  async init(): Promise<void> {
     const initMessages = await this.client.lRange(this.sessionId, 0, -1);
     const orderedMessages = initMessages
       .reverse()
@@ -57,7 +57,9 @@ export class RedisMemory extends BaseChatMemory {
         this.chatHistory.addUserMessage(message.content);
       }
     });
+  }
 
+  async loadMemoryVariables(_values: InputValues): Promise<MemoryVariables> {
     if (this.returnMessages) {
       const result = {
         [this.memoryKey]: this.chatHistory.messages,
@@ -80,5 +82,6 @@ export class RedisMemory extends BaseChatMemory {
     ];
     await this.client.lPush(this.sessionId, messagesToAdd);
     await this.client.expire(this.sessionId, this.memoryTTL);
+    super.saveContext(inputValues, outputValues);
   }
 }

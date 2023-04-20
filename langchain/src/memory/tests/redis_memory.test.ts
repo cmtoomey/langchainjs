@@ -3,13 +3,15 @@ import { RedisMemory } from "../redis_memory.js";
 import { HumanChatMessage, AIChatMessage } from "../../schema/index.js";
 import { createClient } from "redis";
 
-// TODO Update docs
+// TODO Update docs with correct prompt example
+// TODO Figure out typing for client instantiation
 test("Test Redis memory without messages", async () => {
   const client = createClient();
   //@ts-ignore foo
   const memory = new RedisMemory(client, {
     sessionId: "one",
   });
+  await memory.init();
   const result1 = await memory.loadMemoryVariables({});
   expect(result1).toStrictEqual({ history: "" });
 
@@ -31,6 +33,7 @@ test("Test Redis memory with messages", async () => {
     returnMessages: true,
     sessionId: "two",
   });
+  await memory.init();
   const result1 = await memory.loadMemoryVariables({});
   expect(result1).toStrictEqual({ history: [] });
 
@@ -61,6 +64,7 @@ test("Test Redis memory with pre-loaded history", async () => {
     returnMessages: true,
     sessionId: sessionId,
   });
+  await memory.init();
   const result = await memory.loadMemoryVariables({});
   const expectedHuman = new HumanChatMessage("My name is Ozzy");
   const expectedAI = new AIChatMessage("Nice to meet you, Ozzy!");
