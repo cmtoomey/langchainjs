@@ -1,14 +1,14 @@
 import { test, expect } from "@jest/globals";
 import { RedisMemory } from "../redis_memory.js";
 import { HumanChatMessage, AIChatMessage } from "../../schema/index.js";
-import { createClient } from "redis";
+import { RedisClientType, createClient } from "redis";
 
 // TODO Update docs with correct prompt example
 // TODO Figure out typing for client instantiation
 test("Test Redis memory without messages", async () => {
   const client = createClient();
-  //@ts-ignore foo
-  const memory = new RedisMemory(client, {
+
+  const memory = new RedisMemory(client as RedisClientType, {
     sessionId: "one",
   });
   await memory.init();
@@ -28,8 +28,8 @@ test("Test Redis memory without messages", async () => {
 
 test("Test Redis memory with messages", async () => {
   const client = createClient();
-  //@ts-ignore foo
-  const memory = new RedisMemory(client, {
+
+  const memory = new RedisMemory(client as RedisClientType, {
     returnMessages: true,
     sessionId: "two",
   });
@@ -59,8 +59,8 @@ test("Test Redis memory with pre-loaded history", async () => {
   ];
   await client.lPush(`history${sessionId}`, pastMessages);
   await client.disconnect();
-  //@ts-ignore foo
-  const memory = new RedisMemory(client, {
+
+  const memory = new RedisMemory(client as RedisClientType, {
     returnMessages: true,
     sessionId: sessionId,
   });
