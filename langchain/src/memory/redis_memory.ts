@@ -1,4 +1,4 @@
-import type { RedisClientType } from "redis";
+import type { RedisClientType } from "@redis/client";
 import { BaseChatMemory, BaseMemoryInput } from "./chat_memory.js";
 import {
   InputValues,

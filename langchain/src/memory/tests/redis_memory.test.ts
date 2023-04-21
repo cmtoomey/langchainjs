@@ -1,7 +1,7 @@
 import { test, expect } from "@jest/globals";
 import { RedisMemory } from "../redis_memory.js";
 import { HumanChatMessage, AIChatMessage } from "../../schema/index.js";
-import { RedisClientType, createClient } from "redis";
+import { RedisClientType, createClient } from "@redis/client";
 
 // TODO Update docs with correct prompt example
 // TODO Figure out typing for client instantiation
