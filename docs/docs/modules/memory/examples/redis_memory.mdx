@@ -10,11 +10,11 @@ For longer-term persistence across chat sessions, you can swap out the default i
 
 ## Setup
 
-Redis is already included in Langchain dependencies.  See instructions at [Redis](https://redis.io/docs/getting-started/) for running the server locally. There are also multiple providers who will manage Redis as a service. You will need to adapt your client connection parameters to your own provider requirements.
+Redis is already included in Langchain dependencies. See instructions at [Redis](https://redis.io/docs/getting-started/) for running the server locally. There are also multiple providers who will manage Redis as a service. You will need to adapt your client connection parameters to your own provider requirements.
 
 ## Usage
 
-You will need to connect to Redis using the `createClient()` method from the built-in Redis library. You have full access to all the configuration options. Pass that client to the BufferMemory module. 
+You will need to connect to Redis using the `createClient()` method from the built-in Redis library. You have full access to all the configuration options. Pass that client to the BufferMemory module.
 
 import Example from "@examples/memory/redis.ts";
 
