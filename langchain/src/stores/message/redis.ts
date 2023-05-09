@@ -4,7 +4,11 @@ import {
   BaseChatMessage,
   BaseListChatMessageHistory,
 } from "../../schema/index.js";
-import { StoredMessage, mapStoredMessagesToChatMessages } from "./utils.js";
+import {
+  StoredMessage,
+  mapChatMessagesToStoredMessages,
+  mapStoredMessagesToChatMessages,
+} from "./utils.js";
 
 export interface RedisMemoryMessage {
   role: string;
@@ -16,7 +20,7 @@ export type RedisMemoryInput = BaseChatMemoryInput & {
   memoryTTL?: number;
 };
 
-export class RedisMemory extends BaseListChatMessageHistory {
+export class RedisChatMemory extends BaseListChatMessageHistory {
   client: RedisClientType;
 
   sessionId: string;
@@ -52,14 +56,8 @@ export class RedisMemory extends BaseListChatMessageHistory {
   }
 
   async addMessage(message: BaseChatMessage): Promise<void> {
-    console.log(message);
-    // const messagesToAdd = [
-    //   JSON.stringify({ role: "Human", content: `me` }),
-    //   JSON.stringify({ role: "AI", content: `${outputValues.response}` }),
-    // ];
-    // await this.client.lPush(this.sessionId, messagesToAdd).catch((err) => {
-    //   console.log(err);
-    // });
+    const messageToAdd = mapChatMessagesToStoredMessages([message]);
+    await this.client.lPush(this.sessionId, JSON.stringify(messageToAdd[0]));
     await this.client.expire(this.sessionId, this.memoryTTL);
   }
 
